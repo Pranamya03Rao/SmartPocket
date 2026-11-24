@@ -1,4 +1,4 @@
-# Smart Financial Literacy & Budget Planner for Students
+# Smart Financial Literacy & Budget Planner 
 
 MERN-stack application with Gemini AI receipt parsing, bank statement extraction, AES-256 encrypted confidential notes, and automated student budget management.
 
