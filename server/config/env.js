@@ -16,6 +16,9 @@ const envSchema = z.object({
   EMAIL_USER: z.string().default(''),
   EMAIL_PASS: z.string().default(''),
   EMAIL_FROM: z.string().default('noreply@smartbudget.com'),
+  VAPID_PUBLIC_KEY: z.string().default(''),
+  VAPID_PRIVATE_KEY: z.string().default(''),
+  VAPID_SUBJECT: z.string().default('mailto:admin@smartpocket.org'),
 });
 
 const parsed = envSchema.safeParse(process.env);
