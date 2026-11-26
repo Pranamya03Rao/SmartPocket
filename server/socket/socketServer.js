@@ -91,7 +91,7 @@ export function emitGroupUpdate(groupId, eventName, payload) {
 }
 
 /**
- * Broadcast campus announcements to all connected students
+ * Broadcast announcements to all connected users
  */
 export function broadcastAnnouncement(announcement) {
   if (io) {

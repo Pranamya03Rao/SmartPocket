@@ -174,8 +174,8 @@ export async function createAnnouncement(req, res, next) {
     });
     broadcastAnnouncement(announcement);
     broadcast({
-      title: announcement.title || 'New Announcement',
-      body: announcement.body || '',
+      title: 'Alert',
+      body: announcement.title ? `${announcement.title}: ${announcement.body}` : (announcement.body || ''),
       url: '/dashboard',
       tag: `announcement-${announcement._id}`,
     }).catch(() => {});

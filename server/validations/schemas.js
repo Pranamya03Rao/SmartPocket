@@ -222,6 +222,7 @@ export const createAnnouncementSchema = z.object({
   title: z.string().min(1).max(200).trim(),
   body: z.string().min(1).max(2000),
   priority: z.enum(['low', 'normal', 'high']).default('normal'),
+  audience: z.enum(['all', 'students']).default('all').optional(),
   published: z.boolean().default(true),
 });
 
