@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { api, setAccessToken } from '../api/client.js';
+import { unsubscribeFromPush, syncPushSubscriptionWithUser } from '../utils/push.js';
 
 const AuthContext = createContext();
 
@@ -15,6 +16,7 @@ export function AuthProvider({ children }) {
         if (res.data?.accessToken) {
           setAccessToken(res.data.accessToken);
           setUser(res.data.user);
+          syncPushSubscriptionWithUser().catch(() => {});
         }
       } catch (_err) {
         // Not logged in or expired refresh token; expected
@@ -30,6 +32,7 @@ export function AuthProvider({ children }) {
     if (res.data?.accessToken) {
       setAccessToken(res.data.accessToken);
       setUser(res.data.user);
+      syncPushSubscriptionWithUser().catch(() => {});
     }
     return res.data;
   };
@@ -41,6 +44,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
+      await unsubscribeFromPush().catch(() => {});
       await api.post('/auth/logout');
     } catch (_err) {
       // Ignore
