@@ -23,3 +23,11 @@ export const uploadLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Upload limit reached (20/hour). Try again later.' },
 });
+
+export const pushTestLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many test notifications requested. Please wait a minute.' },
+});

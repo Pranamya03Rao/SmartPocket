@@ -1,6 +1,7 @@
 import Goal from '../models/Goal.js';
 import Notification from '../models/Notification.js';
 import { AppError } from '../utils/AppError.js';
+import { sendPushToUser } from '../services/pushService.js';
 
 function checkMilestones(goal) {
   const progress = Math.min(100, Math.floor((goal.saved / goal.target) * 100));
@@ -86,6 +87,12 @@ export async function addSavings(req, res, next) {
         type: 'goal_milestone',
         message: `🎉 Milestone Achieved! You reached ${milestone}% of your goal "${goal.name}"!`,
       });
+      sendPushToUser(req.user._id, {
+        title: 'Milestone Achieved!',
+        body: `🎉 You reached ${milestone}% of your goal "${goal.name}"!`,
+        url: '/goals',
+        tag: `goal-milestone-${goal._id}`,
+      }).catch(() => {});
     }
 
     res.json({ message: 'Savings added successfully', goal, newMilestones });

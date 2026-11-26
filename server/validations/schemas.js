@@ -227,3 +227,32 @@ export const createAnnouncementSchema = z.object({
 
 export const updateAnnouncementSchema = createAnnouncementSchema.partial();
 
+// --- PUSH NOTIFICATION SCHEMAS ---
+export const subscribeSchema = z.object({
+  endpoint: z.string().url('Invalid endpoint URL'),
+  keys: z.object({
+    p256dh: z.string().min(1, 'p256dh key is required'),
+    auth: z.string().min(1, 'auth key is required'),
+  }),
+  expirationTime: z.number().nullable().optional(),
+  userAgent: z.string().max(500).optional(),
+});
+
+export const unsubscribeSchema = z.object({
+  endpoint: z.string().url('Invalid endpoint URL'),
+});
+
+export const sendPushSchema = z.object({
+  userId: z.string().optional(),
+  userIds: z.array(z.string()).optional(),
+  broadcast: z.boolean().optional(),
+  title: z.string().min(1, 'Title is required').max(100),
+  body: z.string().min(1, 'Body is required').max(500),
+  url: z
+    .string()
+    .regex(/^\//, 'URL must be a relative path starting with /')
+    .optional()
+    .default('/'),
+  tag: z.string().max(50).optional(),
+});
+

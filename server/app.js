@@ -20,6 +20,7 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import learnRoutes from './routes/learnRoutes.js';
 import groupRoutes from './routes/groupRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import pushRoutes from './routes/pushRoutes.js';
 
 // Initialize AES crypto with key from env
 initCrypto(env.ENCRYPTION_KEY);
@@ -90,6 +91,7 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/learn', learnRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/push', pushRoutes);
 
 // 9. 404 Handler
 app.use((req, res) => {

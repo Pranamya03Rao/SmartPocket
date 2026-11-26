@@ -6,6 +6,7 @@ import Group from '../models/Group.js';
 import Announcement from '../models/Announcement.js';
 import { AppError } from '../utils/AppError.js';
 import { broadcastAnnouncement } from '../socket/socketServer.js';
+import { broadcast } from '../services/pushService.js';
 
 export async function getMetrics(req, res, next) {
   try {
@@ -172,6 +173,12 @@ export async function createAnnouncement(req, res, next) {
       createdBy: req.user._id,
     });
     broadcastAnnouncement(announcement);
+    broadcast({
+      title: announcement.title || 'New Announcement',
+      body: announcement.body || '',
+      url: '/dashboard',
+      tag: `announcement-${announcement._id}`,
+    }).catch(() => {});
     res.status(201).json(announcement);
   } catch (err) {
     next(err);

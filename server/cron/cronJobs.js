@@ -3,6 +3,7 @@ import Transaction from '../models/Transaction.js';
 import Budget from '../models/Budget.js';
 import Goal from '../models/Goal.js';
 import Notification from '../models/Notification.js';
+import { sendPushToUser } from '../services/pushService.js';
 import { generateFingerprint } from '../utils/fingerprint.js';
 
 export function getNextRecurringDate(date, frequency) {
@@ -67,6 +68,12 @@ export async function processRecurringAndAlerts() {
         type: 'recurring',
         message: `Recurring ${tx.type} recorded: ₹${tx.amount} for ${tx.merchant}.`,
       });
+      sendPushToUser(tx.user, {
+        title: 'Recurring Transaction',
+        body: `Recurring ${tx.type} recorded: ₹${tx.amount} for ${tx.merchant}.`,
+        url: '/transactions',
+        tag: 'recurring-tx',
+      }).catch(() => {});
     }
   } catch (err) {
     console.error('Error processing recurring transactions:', err.message);
@@ -87,6 +94,12 @@ export async function processRecurringAndAlerts() {
           type: 'goal_reminder',
           message: `⏰ Reminder: Goal "${goal.name}" deadline is in ${daysLeft} day(s)! You have ₹${goal.target - goal.saved} left to save.`,
         });
+        sendPushToUser(goal.user, {
+          title: 'Goal Deadline Reminder',
+          body: `⏰ Reminder: Goal "${goal.name}" deadline is in ${daysLeft} day(s)!`,
+          url: '/goals',
+          tag: `goal-due-${goal._id}`,
+        }).catch(() => {});
       }
     }
   } catch (err) {
@@ -123,6 +136,12 @@ export async function processRecurringAndAlerts() {
           type: 'budget_alert',
           message: `⚠️ Budget Alert: You have used ${Math.round((spent / b.totalLimit) * 100)}% of your monthly budget (₹${spent}/₹${b.totalLimit}).`,
         });
+        sendPushToUser(b.user, {
+          title: 'Budget Alert',
+          body: `⚠️ Budget Alert: You have used ${Math.round((spent / b.totalLimit) * 100)}% of your monthly budget.`,
+          url: '/budgets',
+          tag: 'budget-alert',
+        }).catch(() => {});
       }
     }
   } catch (err) {
