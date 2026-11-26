@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext.jsx';
+import { useLanguage } from './LanguageContext.jsx';
 import { getAccessToken } from '../api/client.js';
 
 const SocketContext = createContext({
@@ -10,6 +11,7 @@ const SocketContext = createContext({
 
 export function SocketProvider({ children }) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [liveAnnouncement, setLiveAnnouncement] = useState(null);
@@ -49,7 +51,7 @@ export function SocketProvider({ children }) {
       setIsConnected(false);
     });
 
-    // Global listener for urgent campus announcements
+    // Global listener for urgent announcements
     newSocket.on('new_announcement', (announcement) => {
       setLiveAnnouncement(announcement);
     });
@@ -68,7 +70,7 @@ export function SocketProvider({ children }) {
         <div className="fixed top-16 inset-x-0 z-50 p-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white shadow-lg flex items-center justify-between px-6 animate-in slide-in-from-top duration-300">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
-              Live Campus Alert
+              {t('announcements.alert') || 'Alert'}
             </span>
             <p className="text-sm font-semibold">
               <strong className="underline mr-1">{liveAnnouncement.title}:</strong>

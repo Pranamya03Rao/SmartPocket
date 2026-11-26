@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api/client.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import {
   ShieldCheck,
   Users,
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export function Admin() {
+  const { t } = useLanguage();
   const [metrics, setMetrics] = useState(null);
   const [health, setHealth] = useState(null);
   const [users, setUsers] = useState([]);
@@ -91,6 +93,8 @@ export function Admin() {
   const handleCreateAnnouncement = async (e) => {
     e.preventDefault();
     if (!newTitle.trim() || !newBody.trim()) return;
+    const confirmPrompt = t('announcements.confirmSend') || 'Send this announcement to all users?';
+    if (!window.confirm(confirmPrompt)) return;
     try {
       await api.post('/admin/announcements', {
         title: newTitle.trim(),
@@ -99,7 +103,7 @@ export function Admin() {
       });
       setNewTitle('');
       setNewBody('');
-      setSuccess('Campus announcement published!');
+      setSuccess(t('announcements.publishedSuccess') || 'Public announcement published!');
       fetchDashboard();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to post announcement');
@@ -373,23 +377,23 @@ export function Admin() {
         </div>
       </div>
 
-      {/* Campus Announcements Manager */}
+      {/* Announcements Manager */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Creator */}
         <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
           <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <Bell className="h-5 w-5 text-indigo-600" />
-            Publish Campus Announcement
+            {t('announcements.publishTitle') || 'Publish Public Announcement'}
           </h3>
 
           <form onSubmit={handleCreateAnnouncement} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                Announcement Title *
+                {t('announcements.titleLabel') || 'Announcement Title *'}
               </label>
               <input
                 type="text"
-                placeholder="e.g. Campus UPI Fraud Alert, Semester Budgeting Workshop"
+                placeholder={t('announcements.titlePlaceholder') || 'e.g. UPI Fraud Alert, Free Budgeting Workshop'}
                 value={newTitle}
                 onChange={e => setNewTitle(e.target.value)}
                 required
@@ -399,11 +403,11 @@ export function Admin() {
 
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                Announcement Body *
+                {t('announcements.bodyLabel') || 'Announcement Body *'}
               </label>
               <textarea
                 rows={3}
-                placeholder="Detailed message displayed on student dashboards..."
+                placeholder={t('announcements.bodyPlaceholder') || 'Detailed message shown to all users on their dashboards...'}
                 value={newBody}
                 onChange={e => setNewBody(e.target.value)}
                 required
@@ -413,16 +417,16 @@ export function Admin() {
 
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
-                Priority
+                {t('announcements.priorityLabel') || 'Priority'}
               </label>
               <select
                 value={newPriority}
                 onChange={e => setNewPriority(e.target.value)}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent text-sm"
               >
-                <option value="low">Low</option>
-                <option value="normal">Normal</option>
-                <option value="high">High (Urgent Banner)</option>
+                <option value="low">{t('announcements.priorityLow') || 'Low'}</option>
+                <option value="normal">{t('announcements.priorityNormal') || 'Normal'}</option>
+                <option value="high">{t('announcements.priorityHigh') || 'High (Urgent Banner)'}</option>
               </select>
             </div>
 
@@ -430,7 +434,7 @@ export function Admin() {
               type="submit"
               className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md"
             >
-              Broadcast to Students
+              {t('announcements.broadcastBtn') || 'Broadcast to Everyone'}
             </button>
           </form>
         </div>
@@ -438,11 +442,11 @@ export function Admin() {
         {/* Existing Announcements */}
         <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-4">
           <h3 className="text-base font-bold text-slate-900 dark:text-white">
-            Active Broadcasts ({announcements.length})
+            {t('announcements.title') || 'Announcements'} ({announcements.length})
           </h3>
 
           {announcements.length === 0 ? (
-            <p className="text-xs text-slate-400 text-center py-10">No active announcements.</p>
+            <p className="text-xs text-slate-400 text-center py-10">{t('announcements.noActive') || 'No active announcements.'}</p>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
               {announcements.map(a => (
